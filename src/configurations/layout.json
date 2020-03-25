@@ -1,0 +1,48 @@
+
+
+{
+  "headerWelcomeText": "Hello",
+  "landingPage": "/home",
+  "menuItems": [
+    {
+      "name": "Home",
+      "type": "button",
+      "icon": "home",
+      "controller": "/home",
+      "customTitle": "Home",
+      "isFavourite": true,
+      "color": "red",
+      "subMenuItems": []
+    },
+
+    
+    {
+      "name": "Logout",
+      "type": "logout",
+      "icon": "logout",
+      "controller": "",
+      "customTitle": "Welcome to Boiler Plate",
+      "isFavourite": false,
+      "color": "red",
+
+      "subMenuItems": []
+    }
+  ],
+  "bottomMobileNavigation": true,
+  "displayMobileMenuHam": true,
+  "displayMobileHeader": true,
+  "menuButtonLabel": "Menu",
+  "sideMenu": {
+    "permanent": false,
+    "default": "open"
+  },
+  "theme": {
+    "colors": {
+      "primary": "#35a1b6",
+      "secondary": "rgba(0, 0, 0, 0.87)"
+    },
+    "appBarElevation": 1
+  }
+}
+
+
