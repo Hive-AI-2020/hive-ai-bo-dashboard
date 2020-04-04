@@ -114,6 +114,18 @@ verifyOTP = async (data, accessToken) =>{
   };
 
 
+  getCalendar = async (data) => {
+    return await axiosInstance
+      .get(`/calendar/${data.companyId}?month=${data.month}`)
+      .then(response => {
+        return response.data
+      })
+      .catch(error => {
+        return errorHelper(error);
+      });
+  };
+
+
 
 
   getUserList= async () => {

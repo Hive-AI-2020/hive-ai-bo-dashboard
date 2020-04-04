@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import * as dateFns from "date-fns";
 import "../../../assets/scss/calendar.scss";
@@ -20,7 +20,8 @@ import {
   KeyboardDatePicker
 } from "@material-ui/pickers";
 import { notify } from "components/common/Notification";
-import {API} from "helpers"
+import { API } from "helpers";
+import { BookingTable } from "../BookingTable/BookingTable";
 
 const data = {
   statusCode: 201,
@@ -85,98 +86,40 @@ const daysOfTheWeek = [
   "SATURDAY"
 ];
 
-function getModalStyle() {
-  const top = 50;
-  const left = 50;
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`
-  };
-}
-
-const useStyles = makeStyles(theme => ({
-  paper: {
-    position: "absolute",
-    width: 700,
-    backgroundColor: "#757592eb",
-    border: "2px solid #000",
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3)
-  }
-}));
-
 //---------------------------CALENDAR COMP -----------------------
 export const CalendarComp = () => {
-  const classes = useStyles();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [timeTable, setTimeTable] = useState(false);
-  const [dayOfTheWeek, setDayOfTheWeek] = useState("");
   const [day, setDay] = useState("");
-  console.log("CalendarComp -> day", day);
-  const [open, setOpen] = useState(false);
-  const [isItCalendar, setIsItCalendar] = useState(false);
-  const [modalStyle] = useState(getModalStyle);
-  const [startSlot, setStartSlot] = useState("");
-  const [endSlot, setEndSlot] = useState("");
+  const [monthlySlots, setMonthlySlots] = useState([])
+  const [dailySlots, setDailySlots] = useState([])
 
-  const [selectCalendarDateStart, setSelectCalendarDateStart] = React.useState(
-    Date.now()
-  );
-  const [selectCalendarDateEnd, setSelectCalendarDateEnd] = React.useState(
-    Date.now()
-  );
 
-  const handleDateChange = date => {
-    setSelectCalendarDateStart(date);
+  const nextMonth = () => {
+    setCurrentDate(dateFns.addMonths(currentDate, 1));
   };
-
-  const handleDateChangeEnd = date => {
-    setSelectCalendarDateEnd(date);
+  const prevMonth = () => {
+    setCurrentDate(dateFns.subMonths(currentDate, 1));
   };
+  //--------------------GET DATA ----------------------------
 
-  const handleSwitchCalendar = () => setIsItCalendar(!isItCalendar);
-  const calendarDayPickers = (
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      <Grid container justify="space-around">
-        <Grid item xs={5}>
-          <KeyboardDatePicker
-            margin="normal"
-            id="date-picker-dialog"
-            label="Date picker dialog"
-            format="MM/dd/yyyy"
-            value={selectCalendarDateStart}
-            onChange={handleDateChange}
-            KeyboardButtonProps={{
-              "aria-label": "change date"
-            }}
-          />
-        </Grid>
-        <Grid item xs={5}>
-          <KeyboardDatePicker
-            margin="normal"
-            id="date-picker-dialog"
-            label="Date picker dialog"
-            format="MM/dd/yyyy"
-            value={selectCalendarDateEnd}
-            onChange={handleDateChangeEnd}
-            KeyboardButtonProps={{
-              "aria-label": "change date"
-            }}
-          />
-        </Grid>
-      </Grid>
-    </MuiPickersUtilsProvider>
-  );
-  const handleOpen = () => {
-    setOpen(true);
-  };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  useEffect(() => {
+    const triggerAPI = async() => {
+      const data = {
+        companyId: "5e7adb57bf5d582ff88a7969",
+        month: moment(currentDate).format("YYYY-MM")
+      }
+      
+      const respMonthlySlots = await API.getCalendar(data)
+      if(respMonthlySlots){
+        console.log("triggerAPI -> respMonthlySlots", respMonthlySlots)
+        setMonthlySlots(respMonthlySlots.data.finalData)
+      }
+    }
+    triggerAPI()
+  }, [ currentDate])
 
   const header = () => {
     const dateFormat = "MMMM yyyy";
@@ -242,10 +185,14 @@ export const CalendarComp = () => {
             // onClick={() => onDateClick(cloneDay)}
 
             onClick={() => {
-              setSlots([])
-              setDay(moment(cloneDay).format("LL"));
-              setDayOfTheWeek(daysOfTheWeek[moment(cloneDay).format("d")]);
-              handleOpen();
+              const slotsRequest = monthlySlots.filter(slot => slot.day === daysOfTheWeek[cloneDay.getDay()])
+              if(monthlySlots[0] === undefined || monthlySlots[0] === null ){return null}else {
+
+                if((moment(cloneDay).isBetween(monthlySlots[0].date,monthlySlots[monthlySlots.length -1].date))  && slotsRequest !== undefined && slotsRequest.length > 0 ){ setDailySlots(slotsRequest[0].slots)}
+                console.log(slotsRequest)
+           
+               setSelectedDate(cloneDay);
+              }
             }}
           >
             <span className="number">{formattedDate}</span>
@@ -264,100 +211,7 @@ export const CalendarComp = () => {
     }
     return <div className="body">{rows}</div>;
   };
-  const nextMonth = () => {
-    setCurrentDate(dateFns.addMonths(currentDate, 1));
-  };
-  const prevMonth = () => {
-    setCurrentDate(dateFns.subMonths(currentDate, 1));
-  };
-
-  const onDateClick = day => {
-    setSelectedDate(day);
-  };
-
-  const [slots, setSlots] = useState([]);
-
-  const addSlot = () => {
-    let array = slots;
-    console.log("addSlot -> slots", slots);
-    array.push({startTime:startSlot, endTime:endSlot})
-    setSlots(array);
-  };
-
-  const interval = (
-    <Grid item container xs={12} justify="space-between" alignItems="baseline">
-      <Grid item container xs={8} justify="space-evenly">
-        <Grid item xs={4}>
-          <CustomInput
-            id="start"
-            labelText="Start"
-            required
-            inputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <ScheduleIcon />
-                </InputAdornment>
-              ),
-              placeholder: "HH:MM  (24h)",
-              type: "Start",
-              name: "start",
-              onChange: e => setStartSlot(e.target.value)
-            }}
-            formControlProps={{
-              fullWidth: true
-            }}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <CustomInput
-            id="End"
-            labelText="End*"
-            required
-            inputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <ScheduleIcon />
-                </InputAdornment>
-              ),
-              placeholder: "HH:MM  (24h)",
-              type: "End",
-              name: "end",
-              onChange: e => setEndSlot(e.target.value)
-            }}
-            formControlProps={{
-              fullWidth: true
-            }}
-          />
-        </Grid>
-      </Grid>
-      <Grid item xs={3}>
-        <RegularButton color="danger" size="sm" onClick={() => addSlot()}>
-          Add
-        </RegularButton>
-      </Grid>
-    </Grid>
-  );
-
-  const createCalendar = async () =>{
-    const data = {
-      companyId: "5e7adb57bf5d582ff88a7969",
-      continousRunning: !isItCalendar,
-      calendarStartDate: moment(selectCalendarDateStart).format("YYYY-MM-DD"),
-      calendarEndDate: moment(selectCalendarDateEnd).format("YYYY-MM-DD"),
-      bookingSlots: [
-        {
-          day: dayOfTheWeek,
-          slots,
-        }
-      ]
-    }
-    console.log(data)
-    const respCreateCalendar = await API.createBookingCalendar(data);
-    if(respCreateCalendar){
-      notify("created")
-      console.log(respCreateCalendar)
-    }
-    ;}
+  
 
   return (
     <>
@@ -400,81 +254,21 @@ export const CalendarComp = () => {
               align="center"
               style={{
                 marginBottom: "1vh",
-                padding: "2vh 1vw"
+                paddingTop: "1vh"
               }}
             >
               <Typography variant="h4">
                 {dateFns.format(selectedDate, "dd MMMM")}
               </Typography>
             </Grid>
+            <Grid item xs={11}>
+            <BookingTable slots={dailySlots} day={selectedDate}/>
+
+            </Grid>
           </Grid>
         )}
       </Grid>
-      <div>
-        <Modal
-          aria-labelledby="simple-modal-title"
-          aria-describedby="simple-modal-description"
-          open={open}
-          onClose={handleClose}
-        >
-          <div style={modalStyle} className={classes.paper}>
-            <Grid container justify="center">
-              <Grid item xs={12}>
-                <Typography variant="h5" align="center">
-                  Edit Availability
-                </Typography>
-              </Grid>
-              <Grid container item xs={12} alignItems="baseline">
-                <Grid item xs={6}>
-                  <Typography variant="h6" align="right">
-                    Choose between a range of dates
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Switch
-                    checked={isItCalendar}
-                    onChange={handleSwitchCalendar}
-                    name="checkedA"
-                    inputProps={{ "aria-label": "secondary checkbox" }}
-                  />
-                </Grid>
-              </Grid>
-
-              {isItCalendar ? calendarDayPickers : ""}
-
-              {interval}
-
-              <Grid item xs={12}>
-                {slots !== undefined && slots.length > 0
-                  ? slots.map(slot => {
-                      return slot.day === day ? (
-                        <Typography
-                          variant="subtitle1"
-                          style={{ color: "red" }}
-                        >
-                          {dayOfTheWeek}
-                          {". "}
-                          {slot.startSlot}
-                          {" : "}
-                          {slot.endSlot}
-                        </Typography>
-                      ) : (
-                        ""
-                      );
-                    })
-                  : ""}
-              </Grid>
-              <Grid xs={12} align="center">
-                <RegularButton color="primary" onClick={()=> createCalendar()}>
-                  {" "}
-                  Apply to all the {dayOfTheWeek}s{" "}
-                </RegularButton>
-              </Grid>
-        
-            </Grid>
-          </div>
-        </Modal>
-      </div>
+      <div></div>
     </>
   );
 };

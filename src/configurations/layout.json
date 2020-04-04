@@ -38,8 +38,8 @@
   },
   "theme": {
     "colors": {
-      "primary": "#35a1b6",
-      "secondary": "rgba(0, 0, 0, 0.87)"
+      "primary": "#04a9a7",
+      "secondary": "rgb(92, 91, 92)"
     },
     "appBarElevation": 1
   }

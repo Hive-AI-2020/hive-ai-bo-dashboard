@@ -10,6 +10,7 @@ import {
   Home,
   MobileMenu,
   FourOFour,
+  CreateCalendar
 } from "views";
 import { Layout } from "../layout";
 import { LayoutConfig } from "configurations";
@@ -86,6 +87,20 @@ export const AppRoutes = props => {
             <Layout>
               {" "}
               <MobileMenu {...props} />
+            </Layout>
+          )
+        }
+      />
+      <Route
+        exact
+        path="/create-calendar"
+        render={() =>
+          loginStatus === false ? (
+            <Redirect to={{ pathname: "/" }} {...props} />
+          ) : (
+            <Layout>
+              {" "}
+              <CreateCalendar {...props} />
             </Layout>
           )
         }

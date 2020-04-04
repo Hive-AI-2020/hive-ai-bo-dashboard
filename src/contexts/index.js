@@ -2,6 +2,7 @@ import React from "react";
 import { LoginContext, LoginProvider } from "./common/LoginContext";
 import { LayoutContext, LayoutProvider } from "./common/LayoutContext";
 import { UserContext, UserProvider } from "./profile/ProfileContext";
+import { SlotsContext, SlotsProvider } from "./dependants/slots/Slots";
 
 export {
   LoginContext,
@@ -9,7 +10,9 @@ export {
   LayoutContext,
   LayoutProvider,
   UserContext,
-  UserProvider
+  UserProvider,
+  SlotsContext,
+  SlotsProvider
 };
 
 export const ContextManager = props => {
@@ -18,7 +21,9 @@ export const ContextManager = props => {
     <LayoutProvider>
       <LoginProvider>
         <UserProvider>
+          <SlotsProvider>
           {children}
+          </SlotsProvider>
         </UserProvider>
       </LoginProvider>
     </LayoutProvider>

@@ -52,6 +52,9 @@ import {TimeLine} from "components/dependants/Timeline/Timeline"
 import {ExpansionPanelComponent} from "components/dependants/ExpansionPanel/ExpansionPanel"
 import {NavBar} from "components/dependants/Navigator/Nav"
 import { CalendarComp} from "components/dependants/Calendar/Calendar"
+import { SlotsSingleDay} from "components/dependants/SlotsSingleDay/SlotsSingleDay"
+import { BookingTable} from "components/dependants/BookingTable/BookingTable"
+
 
 
 
@@ -93,5 +96,7 @@ export {
   TimeLine,
   CalendarComp,
   ExpansionPanelComponent,
-  NavBar
+  NavBar,
+  SlotsSingleDay,
+  BookingTable
 };

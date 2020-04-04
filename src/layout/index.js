@@ -35,7 +35,7 @@ export const Layout = (props) => {
 
    let applicationTheme = createMuiTheme({
     palette: {
-       type: "dark",
+       type: "light",
       primary: {
         main: LayoutConfig.theme !== undefined ? LayoutConfig.theme.colors !== undefined ? LayoutConfig.theme.colors.primary !== undefined ? LayoutConfig.theme.colors.primary : null : null : null
       },
@@ -46,19 +46,23 @@ export const Layout = (props) => {
     },
     typography: {
       h5: {
-        fontFamily: "Arial Rounded MT, Helvetica, sans-serif",
+        fontFamily: "Oswald-Medium, Helvetica, sans-serif",
         fontWeight: "bold",
-        fontSize: 18,
-        color: "#4D5055"
+        fontSize: 24,
+        color: "rgb(92, 91, 92)"
       },
       body1: {
-        fontFamily: "Arial Unicode MS, Helvetica, sans-serif",
+        fontFamily: "HelveticaNeue, Helvetica, sans-serif",
         fontSize: 14,
-        color: "#4D5055"
+        color: "rgb(92, 91, 92)"
       },
-      body2: { fontFamily: "Helvetica, sans-serif", fontSize: 12 },
+      body2: { 
+        fontFamily: "HelveticaNeue, sans-serif", 
+        fontSize: 21, 
+        color: "rgb(92, 91, 92)"
+      },
       caption: {
-        color: "black ",
+        color: "rgb(92, 91, 92)",
         fontSize: "12px ",
         fontFamily: "Helvetica, sans-serif"
       },
@@ -66,20 +70,21 @@ export const Layout = (props) => {
         fontFamily: "Arial Rounded MT, Helvetica, sans-serif",
         fontWeight: "bold",
         fontSize: 12,
-        color: "#4D5055"
+        color: "rgb(92, 91, 92)"
       },
       h4: {
         fontFamily: "Arial Rounded MT, Helvetica, sans-serif",
         fontWeight: "bold",
         fontSize: 28,
-        color: "black"
+        color: "rgb(92, 91, 92)"
       },
       subtitle1: {
         fontFamily: "Arial Rounded MT, Helvetica, sans-serif",
         fontWeight: "bold",
         fontSize: 10,
-        color: "white"
-      }
+        color: "rgb(92, 91, 92)"
+      },
+
     },
   });
   let isItDesktop = useMediaQuery('(min-width:600px) and (min-height:600px)');
@@ -89,7 +94,7 @@ export const Layout = (props) => {
       <div className={classes.root}>
         {isItDesktop ? <Header /> : LayoutConfig.bottomMobileNavigation ? LayoutConfig.displayMobileHeader ? <Header /> : null : <Header />}
         <main className={isItDesktop ? classes.content : classes.mobileContent}>
-        {isItDesktop ? <NavBar /> : ""}
+        {/* {isItDesktop ? <NavBar /> : ""} */}
           {/* <div className={isItDesktop ? classes.appBarSpacer : LayoutConfig.displayMobileHeader ? classes.appBarSpacer : null} /> */}
           {props.children}
           <div className={isItDesktop ? null : LayoutConfig.bottomMobileNavigation ? classes.appBarSpacer : null} />
