@@ -1,4 +1,4 @@
-name: Deployment
+name: Deployment-bo
 on:
   push:
     branches:
