@@ -1,4 +1,4 @@
-name: Deployment-bo
+name: Deployment-bo master
 on:
   push:
     branches:
